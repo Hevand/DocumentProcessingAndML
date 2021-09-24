@@ -1,0 +1,36 @@
+﻿@page
+@model Web.Pages.AddDocumentModel
+@{
+	ViewData["Title"] = "Document Abstraction";
+}
+
+<div class="text-center">
+ <h1 class="display-4">New request</h1>
+ <div class="container">
+  <form method="post" enctype="multipart/form-data">
+   <div class="row text-left">
+	<label for="Name" class="col-4">Name:</label>
+	<input id="Name" name="Name" class="col-8" type="text" />
+   </div>
+
+   <div class="row text-left">
+	<label for="DocumentType" class="col-4">Document Type:</label>
+	<select id="DocumentType" name="DocumentType" class="col-8">
+	 <option value="Debt">Debt</option>
+	 <option value="Lease">Lease</option>
+	</select>
+   </div>
+
+   <div class="row text-left">
+	<label for="Attachment" class="col-4">Attachment:</label>
+	<input multiple id="Attachment" class="col-8" type="file" name="Attachment[]" />
+   </div>
+
+   <div class="row text-left">
+	   <div class="col-4 d-inline-block">&nbsp;</div>
+	<input type="submit" value="Add new request" class="col-8" asp-page-handler="Submit" />
+   </div>
+  </form>
+ </div>
+</div>
+

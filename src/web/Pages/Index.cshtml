@@ -1,0 +1,64 @@
+﻿@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Document Abstraction";
+}
+
+<div class="text-left">
+ <h1>Document processing requests</h1>
+ <h2>Getting started</h2>
+ <div class="container">
+  <div class="row">
+   Welcome, @Model.UserName !
+  </div>
+  <div class="row">
+   Below, you'll see a list of all the requests that have been created before.
+   <br />
+   Ready to add one more?
+  </div>
+  <a href="/AddDocument">Create new request!</a>
+ </div>
+
+ <h2>Current and historic requests</h2>
+ <div class="container">
+  <table class="col-12">
+   <thead>
+	<tr>
+	 <th class="col-4 text-left">Name</th>
+	 <th class="col-1 text-left">Type</th>
+	 <th class="col-2 text-left">Requested on</th>
+	 <th class="col-2 text-left">Completed on</th>
+	 <th class="col-2 text-left">Status</th>
+	</tr>
+   </thead>
+   <tbody>
+				@if (Model.RequestSummary.Count() == 0)
+				{
+		<tr><td colspan="5">No previous requests found. Press the link above to get started!</td></tr>
+				}
+
+				@foreach (var summary in Model.RequestSummary)
+				{
+		<tr>
+		 <td class="text-left"> @summary.Name </td>
+		 <td class="text-left"> @summary.Type </td>
+		 <td class="text-left"> @summary.RequestedOn </td>
+		 <td class="text-left"> @summary.CompletedOn </td>
+		 <td class="text-left"> @summary.Status </td>
+		</tr>
+				}
+   </tbody>
+  </table>
+ </div>
+
+ <h2>Clean history</h2>
+ <div class="container">
+  <p>When you want to clean this list, simply press this button. This action is irreversible!</p>
+  <form method="post">
+   <input type="submit" value="Delete" action="Delete" />
+  </form>
+ </div>
+</div>
+
+
+
