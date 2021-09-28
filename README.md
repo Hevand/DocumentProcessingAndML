@@ -4,7 +4,7 @@ Example implementation for E2E document processing
 ## Overview
 In this repository, we're creating the following: 
 
-![Oveview](img/overview.jpg)
+![Overview](./img/Overview.jpg)
 
 In summary: 
 
