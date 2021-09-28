@@ -12,7 +12,6 @@ app_service_web_name="app-$project_name-$locationAbbreviation"
 cosmosdb_name="cdb-$project_name-$locationAbbreviation"
 functionapp_name="fnc-$project_name-$locationAbbreviation"
 acr_registry_name="acr"$project_name$locationAbbreviation
-aks_cluster_name="aks-$project_name-$locationAbbreviation"
 cognitiveservices_account_name="cs-$project_name-$locationAbbreviation"
 machinelearning_workspace_name="aml-$project_name-$locationAbbreviation"
 
@@ -90,7 +89,7 @@ az functionapp create \
     --os-type Windows \
     --runtime dotnet
 
-# kubernetes
+# Container registry
 az acr create \
   -n $acr_registry_name \
   -g $resource_group_name \
@@ -98,13 +97,6 @@ az acr create \
   --sku Basic \
   --admin-enabled true \
   --zone-redundancy Disabled
-
-az aks create \
-  -n $aks_cluster_name \
-  -g $resource_group_name \
-  --load-balancer-sku Standard \
-  --enable-managed-identity \
-  --attach-acr $acr_registry_name
 
 # Cognitive Services
 az cognitiveservices account create \
@@ -143,4 +135,4 @@ az webapp config appsettings set \
 az functionapp config appsettings set \
   -g $resource_group_name \
   -n $functionapp_name \
-  --settings CosmosDB=$cosmosDbConnectionString StorageAccount=$storageAccountConnectionString formrecognizerkey=$cognitiveServicesKey formrecognizeruri=$cognitiveServicesUri
+  --settings CosmosDB=$cosmosDbConnectionString StorageAccount=$storageAccountConnectionString formrecognizerkey=$cognitiveServicesKey formrecognizeruri=$cognitiveServicesUri ModelUri="TOBEDEFINED" ModelKey="TOBEDEFINED"

@@ -9,5 +9,6 @@ namespace Common.Repositories
         Task Add(ProcessingResult result);
         Task<IEnumerable<ProcessingResult>> ListByUser(string userName);
         Task DeleteByUser(string userName);
+        Task<ProcessingResult> ListbyUserAndId(string id, string name);
     }
 }

@@ -40,7 +40,7 @@
 				@foreach (var summary in Model.RequestSummary)
 				{
 		<tr>
-		 <td class="text-left"> @summary.Name </td>
+		 <td class="text-left"><a href="/Details?id=@summary.Id">@summary.Name</a></td>
 		 <td class="text-left"> @summary.Type </td>
 		 <td class="text-left"> @summary.RequestedOn </td>
 		 <td class="text-left"> @summary.CompletedOn </td>

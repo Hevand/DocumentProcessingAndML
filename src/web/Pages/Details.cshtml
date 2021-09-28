@@ -1,0 +1,39 @@
+﻿@page
+@model Web.Pages.DetailsModel
+@{
+	ViewData["Title"] = "Document Abstraction";
+}
+
+<div class="text-left">
+ <h1 class="display-4">Request details</h1>
+ <div class="container">
+  <div>
+   <strong>Input documents</strong>
+   <ol>
+				@foreach (var d in Model.OriginalDocuments)
+				{
+		<li><a href="@d.Uri">@d.Link</a></li>
+				}
+   </ol>
+  </div>
+  <div>
+   <strong>OCR documents</strong>
+   <ol>
+				@foreach (var d in Model.OCRDocuments)
+				{
+		<li><a href="@d.Uri">@d.Link</a></li>
+				}
+   </ol>
+
+  </div>
+  <div>
+   <strong>Result documents</strong>
+   <ol>
+				@foreach (var d in Model.JsonDocuments)
+				{
+		<li><a href="@d.Uri">@d.Link</a></li>
+				}
+   </ol>
+  </div>
+ </div>
+</div>

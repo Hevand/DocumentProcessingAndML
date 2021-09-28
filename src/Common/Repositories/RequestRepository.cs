@@ -47,5 +47,10 @@ namespace Common.Repositories
                 await Container.DeleteItemAsync<ProcessingRequest>(i.Id, new Microsoft.Azure.Cosmos.PartitionKey(i.User));
             }
         }
+
+        public async Task<ProcessingRequest> ListByUserAndId(string id, string name)
+        {
+            return await Container.ReadItemAsync<ProcessingRequest>(id, new Microsoft.Azure.Cosmos.PartitionKey(name)); 
+        }
     }
 }

@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace FunctionApp
@@ -24,6 +25,10 @@ namespace FunctionApp
         private readonly string _formRecognizerKey;
         private readonly string _formRecognizerUri;
 
+        private readonly string _ModelKey;
+        private readonly string _ModelUri;
+
+
         public ProcessRequestFunction()
         {
             string cosmosDbconnection = System.Environment.GetEnvironmentVariable("CosmosDB", EnvironmentVariableTarget.Process);
@@ -34,6 +39,9 @@ namespace FunctionApp
 
             this._formRecognizerKey = System.Environment.GetEnvironmentVariable("formrecognizerkey");
             this._formRecognizerUri = System.Environment.GetEnvironmentVariable("formrecognizeruri");
+
+            this._ModelKey = Environment.GetEnvironmentVariable("ModelKey");
+            this._ModelUri = Environment.GetEnvironmentVariable("ModelUri");
         }
 
         [FunctionName("ProcessUploadedDocuments")]
@@ -58,10 +66,11 @@ namespace FunctionApp
                             using (Stream ocrContent = await ConvertToText(request, binaryContent, log))
                             {
                                 var attachmentAsText = await UploadDocument(request, $"{request.Id}.txt", ocrContent, log);
-
-                                using (Stream modelResult = await Abstract(request, ocrContent, log))
+                                                                
+                                using (Stream modelResultStream = await Abstract(request, ocrContent, log))
                                 {
-                                    var attachmentAbstractionAsJson  = await UploadDocument(request, $"{request.Id}.json", modelResult, log);
+                                    //upload document
+                                    var attachmentAbstractionAsJson = await UploadDocument(request, $"{request.Id}.json", modelResultStream, log);
 
                                     //Create result
                                     await CreateResult(request, startTime, new[] { attachmentAsText, attachmentAbstractionAsJson }, log);                                    
@@ -124,30 +133,56 @@ namespace FunctionApp
 
         private async Task<Stream> Abstract(ProcessingRequest request, Stream ocrContent, ILogger log)
         {
-            //ocrContent.Seek(0, SeekOrigin.Begin);
+            ocrContent.Seek(0, SeekOrigin.Begin);
+            string payload = null;
 
-            //string payload = null;
+            using (StreamReader sr = new StreamReader(ocrContent))
+            {
+                payload = await sr.ReadToEndAsync();
+            }
 
-            //using (StreamReader sr = new StreamReader(ocrContent)) 
-            //{
-            //    payload = await sr.ReadToEndAsync();
-            //}
+            ModelProcessingRequest modelRequest = new ModelProcessingRequest()
+            {
+                Id = request.Id,
+                Content = payload
+            };
 
-            //ModelProcessingRequest modelRequest = new ModelProcessingRequest()
-            //{
-            //    Id = request.Id,
-            //    Content = payload
-            //};
+            var handler = new HttpClientHandler()
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual,
+                ServerCertificateCustomValidationCallback =
+                        (httpRequestMessage, cert, cetChain, policyErrors) => { return true; }
+            };
 
-            //invoke service
-            string response = "[]";
 
-            MemoryStream ms = new MemoryStream();
-            StreamWriter sw = new StreamWriter(ms);
-            await sw.WriteAsync(response);
-            sw.Flush();
+            Stream result = null;
+            using (var client = new HttpClient(handler))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _ModelKey);
+                client.BaseAddress = new Uri(_ModelUri);
 
-            return ms;
+                var requestString = JsonConvert.SerializeObject(modelRequest);
+                var content = new StringContent(requestString);
+
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                HttpResponseMessage rsp = await client.PostAsync("", content);
+
+                if (rsp.IsSuccessStatusCode)
+                {
+                    result = await rsp.Content.ReadAsStreamAsync();
+
+                }
+                else
+                {
+                    log.LogError(string.Format("The request failed with status code: {0}", rsp.StatusCode));
+                    throw new InvalidOperationException($"Couldn't complete the processing of {request.Id}");
+                }
+            }
+
+            log.LogInformation($"Applied custom ML for {request.Name} ({request.Id}) - {result.Length} bytes!");
+
+            return result;
         }
 
         private async Task<Stream> ConvertToText(ProcessingRequest request, Stream binaryContent, ILogger log)

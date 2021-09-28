@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "functions", "functions", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "web\Web.csproj", "{B4B904B9-F857-49E8-9562-262D37D3B4EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp", "functions\FunctionApp\FunctionApp.csproj", "{6A3808D0-7A43-40F6-9F1F-7C9CB1327F87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionApp", "functions\FunctionApp\FunctionApp.csproj", "{6A3808D0-7A43-40F6-9F1F-7C9CB1327F87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{F392E085-29CC-4E42-9CCA-15CE66A96949}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{F392E085-29CC-4E42-9CCA-15CE66A96949}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

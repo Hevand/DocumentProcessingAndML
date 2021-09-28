@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Sas;
 using Common.Model;
 using System;
 using System.IO;
@@ -59,6 +60,15 @@ namespace Common.Repositories
             await blobClient.DownloadToAsync(ms);
 
             return ms;
+        }
+
+        public Uri GetSASUri(Attachment a)
+        {
+            var containerClient = _serviceClient.GetBlobContainerClient(a.ContainerName);
+
+            var blobClient = containerClient.GetBlobClient(a.FileName);
+
+            return blobClient.GenerateSasUri(new BlobSasBuilder(BlobContainerSasPermissions.Read, new DateTimeOffset(DateTime.UtcNow.AddMinutes(30))));
         }
     }
 }
