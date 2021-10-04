@@ -87,7 +87,7 @@ def buildresult(identifier, answer_top3):
         item = {"id" : fact_names[i]}        
         item["answers"] = []        
         for answerIndex in [0,1,2]:
-            answer = answer_top3[i * 3 + answerIndex]
+            answer = answer_top3[i][answerIndex]
             item["answers"].append(answer)    
         
         result["questions"].append(item)

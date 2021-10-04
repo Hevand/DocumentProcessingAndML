@@ -55,7 +55,7 @@ To recreate this environment:
 - Clone this repository
 - Run the [infrastructure/setup.sh](infrastructure/setup.sh) script
 - Use Visual Studio
-    - Update the Azure AD info in [appsettings.json](web/appsettings.json)
+    - Update the Azure AD info in [appsettings.json](web/appsettings.json). If no application has been created, follow the instructions [here](https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad#-create-a-new-app-registration-automatically)
     - Deploy the Web App + Function App to the created infrastructure
 - In Azure ML
     - Add the required files (notebook, python, conda)
