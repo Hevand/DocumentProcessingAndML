@@ -1,0 +1,61 @@
+name: .NET
+
+on:
+  workflow_dispatch:
+    inputs:
+      subscriptionId:
+        description: 'Target subscription id'
+        required: true
+        default: ''
+      projectName:
+        description: 'Project name'
+        required: true
+        default: 'abstract'
+      region:
+        description: 'Region'
+        required: true
+        default: 'westeurope'
+      regionAbbreviation:
+        description: 'Region (short for resource names)'
+        required: true
+        default: 'we'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Checkout
+      uses: actions/checkout@v2
+        
+    - name: Azure CLI Action
+      uses: Azure/cli@1.0.4
+      with:        
+        inlineScript: |
+          chmod +x $GITHUB_WORKSPACE/infrastructure/setup.sh
+          $GITHUB_WORKSPACE/infrastructure/setup.sh       
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:    
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Building web app
+      uses: azure/appservice-build@v2
+      with:
+        platform: .NET
+        platform-version: 3.1.x
+        source-directory: ./src/web
+        output-directory: <OUTPUT_DIR>
+
+    - name: Deploying web app to Azure
+      uses: azure/webapps-deploy@v1
+      with:
+        app-name: app-${{inputs.projectName}}-${{inputs.regionAbbreviation}}
+        publish-profile: ${{ secrets.AZURE_WEB_APP_PUBLISH_PROFILE }}
