@@ -73,7 +73,8 @@ def run(request):
     answer_top3 = question_answerer(
         question = questions,
         context = documentText,
-        topk=3
+        topk=3,
+        handle_impossible_answer=True
     )
     
     result = buildresult(identifier, answer_top3)
